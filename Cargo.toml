@@ -1,0 +1,10 @@
+[package]
+name = "pgs-chroma"
+version = "0.1.0"
+edition = "2021"
+license = "AGPL-3.0-or-later"
+
+[dependencies]
+anyhow = "1.0.53"
+byteorder = "1.4.3"
+getopts = "0.2.21"
