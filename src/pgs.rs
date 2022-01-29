@@ -1,17 +1,11 @@
+use crate::filter::{Filter, Pixel};
+
 use anyhow::Result;
 use byteorder::{BigEndian, ReadBytesExt, WriteBytesExt};
 
 use std::io::Cursor;
 
-#[derive(Debug)]
-struct Pixel {
-    y: u8,
-    cr: u8,
-    cb: u8,
-    a: u8,
-}
-
-pub fn convert(data: &mut Vec<u8>) -> Result<()> {
+pub fn convert(data: &mut Vec<u8>, filter: Filter) -> Result<()> {
     let mut buf = Cursor::new(data);
 
     while !buf.is_empty() {
@@ -36,7 +30,7 @@ pub fn convert(data: &mut Vec<u8>) -> Result<()> {
                 let cb = buf.read_u8()?;
                 let a = buf.read_u8()?;
 
-                let p = convert_pixel(Pixel { y, cr, cb, a });
+                let p = Pixel { y, cr, cb, a }.filter(filter);
 
                 buf.set_position(buf.position() - 4);
                 buf.write_u8(p.y)?;
@@ -52,13 +46,4 @@ pub fn convert(data: &mut Vec<u8>) -> Result<()> {
     }
 
     Ok(())
-}
-
-fn convert_pixel(p: Pixel) -> Pixel {
-    let y = p.y;
-    let cr = 128;
-    let cb = 128;
-    let a = p.a;
-
-    Pixel { y, cr, cb, a }
 }
